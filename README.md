@@ -12,4 +12,7 @@ stated otherwise.
 
 Copyright (c) 2012 Matthew Neale
 
-Simplejson is Copyright (c) 2006 Bob Ippolito
+Includes
+--------
+
+Simplejson is Copyright (c) 2006 Bob Ippolito (https://github.com/simplejson/simplejson)
