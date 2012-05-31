@@ -46,6 +46,7 @@ Methods:
   ListSightings
   ListUserLocators
   ListUserSightings
+  ResightSighting
   Upload
   UploadUrl
   User
@@ -511,6 +512,81 @@ def api_listusersightings(server_url, opts):
 
     return method_url, None, None
 
+def api_resightsighting(server_url, opts):
+    """Construct the url and POST data for a call to the ResightSighting API method.
+    
+    Arguments:
+    server_url - The url of the server where the API is running.
+    opts - The command-line options.
+    
+    Returns:
+    A tuple containing the full url for invoking the API method, the POST data
+    to be sent and the POST data content type.
+    """
+    # The url requires a user_id so this is mandatory
+    if opts.user_id is None:
+        raise Error('A user_id is required for this API method')
+        
+    # The url requires a sighting_id so this is mandatory
+    if opts.sighting_id is None:
+        raise Error('A sighting_id is required for this API method')
+    
+    method_url = '%s/%s/sightings/%s/%s/resightings' % (server_url, _API_ROOT_PATH, opts.user_id, opts.sighting_id)
+
+    params = {}
+    
+    if opts.access_token is not None:
+        params['access_token'] = opts.access_token
+
+    if opts.accuracy is not None:
+        params['accuracy'] = opts.accuracy
+
+    if opts.altitude is not None:
+        params['altitude'] = opts.altitude
+
+    if opts.altitude_accuracy is not None:
+        params['altitude_accuracy'] = opts.altitude_accuracy
+
+    if opts.blobtracker_id is not None:
+        params['blobtracker_id'] = opts.blobtracker_id
+
+    if opts.description is not None:
+        params['description'] = opts.description
+
+    if opts.heading is not None:
+        params['heading'] = opts.heading
+
+    if opts.hold:
+        params['hold'] = 'true'
+
+    if opts.latitude is not None:
+        params['latitude'] = opts.latitude
+
+    if opts.locator_id is not None:
+        params['locator_id'] = opts.locator_id
+
+    if opts.longitude is not None:
+        params['longitude'] = opts.longitude
+
+    if opts.publish_to_facebook:
+        params['publish_to_facebook'] = 'true'
+
+    if opts.sandbox:
+        params['sandbox'] = 'true'
+
+    if opts.speed is not None:
+        params['speed'] = opts.speed
+
+    if opts.tweet_sighting:
+        params['tweet_sighting'] = 'true'
+
+    if opts.tz_offset is not None:
+        params['tz_offset'] = opts.tz_offset
+
+    data, content_type = encode_post_data(params)
+    
+    return method_url, data, content_type
+
 def api_upload(server_url, opts):
     """Construct the url and POST data for a call to the Upload API method.
     
@@ -605,6 +681,7 @@ methods = {
     'listsightings': api_listsightings,
     'listuserlocators': api_listuserlocators,
     'listusersightings': api_listusersightings,
+    'resightsighting': api_resightsighting,
     'upload': api_upload,
     'uploadurl': api_uploadurl,
     'user': api_user,
@@ -632,6 +709,7 @@ Methods:
   ListSightings
   ListUserLocators
   ListUserSightings
+  ResightSighting
   Upload
   UploadUrl
   User""")
