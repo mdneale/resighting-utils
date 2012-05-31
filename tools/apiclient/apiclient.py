@@ -35,13 +35,13 @@ Usage: apiclient.py server_url method [options]
 
 Arguments:
   server_url            The url of the server where the API is running,
-                        e.g. https://resighting.appspot.com or
-                        http://localhost:8081
+                        e.g. https://resighting.appspot.com
   method                The name of the API to invoke. See list below.
 
 Methods:
   CreateSighting
   GetSighting
+  ListLocatorSightings
   ListSightingLocators
   ListSightings
   ListUserLocators
@@ -322,6 +322,48 @@ def api_getsighting(server_url, opts):
 
     return method_url, None, None
 
+def api_listlocatorsightings(server_url, opts):
+    """Construct the url for a call to the ListLocatorSightings API method.
+    
+    Arguments:
+    server_url - The url of the server where the API is running.
+    opts - The command-line options.
+    
+    Returns:
+    A tuple containing the full url for invoking the API method and None for
+    the POST data and content type as this is a GET request.
+    
+    Raises:
+    Error if no locator_id was specified on the command-line.
+    """
+    # The url requires a locator_id so this is mandatory
+    if opts.locator_id is None:
+        raise Error('A locator_id is required for this API method')
+    
+    params = {}
+
+    if opts.access_token is not None:
+        params['access_token'] = opts.access_token
+
+    if opts.cursor is not None:
+        params['cursor'] = opts.cursor
+
+    if opts.fetch_size is not None:
+        params['fetch_size'] = opts.fetch_size
+
+    if opts.latitude is not None:
+        params['latitude'] = opts.latitude
+
+    if opts.list_type is not None:
+        params['list_type'] = opts.list_type
+
+    if opts.longitude is not None:
+        params['longitude'] = opts.longitude
+
+    method_url = '%s/%s/locators/%s/sightings?%s' % (server_url, _API_ROOT_PATH, opts.locator_id[0], urllib.urlencode(params))
+
+    return method_url, None, None
+
 def api_listsightinglocators(server_url, opts):
     """Construct the url for a call to the ListSightingLocators API method.
     
@@ -558,6 +600,7 @@ def api_user(server_url, opts):
 methods = {
     'createsighting': api_createsighting,
     'getsighting': api_getsighting,
+    'listlocatorsightings': api_listlocatorsightings,
     'listsightinglocators': api_listsightinglocators,
     'listsightings': api_listsightings,
     'listuserlocators': api_listuserlocators,
@@ -578,13 +621,13 @@ def parse_command_line():
 
 Arguments:
   server_url            The url of the server where the API is running,
-                        e.g. https://resighting.appspot.com or
-                        http://localhost:8081
+                        e.g. https://resighting.appspot.com
   method                The name of the API to invoke. See list below.
 
 Methods:
   CreateSighting
   GetSighting
+  ListLocatorSightings
   ListSightingLocators
   ListSightings
   ListUserLocators
