@@ -31,10 +31,10 @@ http://resighting.wikia.com/wiki/API.
 For more documentation of this script and examples see
 http://resighting.wikia.com/wiki/Apiclient.py.
 
-Usage: apiclient.py server_url method [options]
+Usage: apiclient.py server-url method [options]
 
 Arguments:
-  server_url            The url of the server where the API is running,
+  server-url            The url of the server where the API is running,
                         e.g. https://resighting.appspot.com
   method                The name of the API to invoke. See list below.
 
@@ -47,53 +47,57 @@ Methods:
   ListUserLocators
   ListUserSightings
   ResightSighting
+  UpdateSighting
   Upload
   UploadUrl
   User
 
 Options:
-  -h, --help            Show help message and exit
-  --access_token=ACCESS_TOKEN
+  -h, --help            show this help message and exit
+  --access-token=ACCESS_TOKEN
                         An API access token
   --accuracy=ACCURACY   The accuracy of a latitude and longitude in metres
   --altitude=ALTITUDE   An altitude in metres
-  --altitude_accuracy=ALTITUDE_ACCURACY
+  --altitude-accuracy=ALTITUDE_ACCURACY
                         The accuracy of an altitude reading in metres
-  --blobtracker_id=BLOBTRACKER_ID
-                        A blobtracker_id returned by the Upload API
+  --blobtracker-id=BLOBTRACKER_ID
+                        A blobtracker id returned by the Upload API
   --cursor=CURSOR       A cursor returned by a previous call to the method
-                        marking the point where listing should continue from.
+                        marking the point where listing should continue from
   --description=DESCRIPTION
                         A description
-  --fetch_size=FETCH_SIZE
+  --fetch-size=FETCH_SIZE
                         The number of results to retrieve
   --filename=FILENAME   A file to upload
   --heading=HEADING     A heading
   --hold                Place a Sighting on hold
   --latitude=LATITUDE   A latitude
-  --list_type=LIST_TYPE
+  --list-type=LIST_TYPE
                         The type of list to request: latest or nearest
                         Sightings
-  --locator_id=LOCATOR_ID
+  --locator-id=LOCATOR_ID
                         A Locator id. Multiple can be specified.
   --longitude=LONGITUDE
                         A longitude
+  --no-hold             Do not place a Sighting on hold
+  --no-publish-to-facebook
+                        Do not publish a Sighting to the user's Facebook wall
+  --no-tweet-sighting   Do not tweet a Sighting
   --options             Send an OPTIONS HTTP request to the server
-  --publish_to_facebook
+  --publish-to-facebook
                         Publish a Sighting to the user's Facebook wall
   --sandbox             Invoke the API in sandbox mode
-  --sighting_id=SIGHTING_ID
+  --sighting-id=SIGHTING_ID
                         A Sighting id
   --speed=SPEED         A speed
-  --tweet_sighting      Tweet a Sighting
-  --tz_offset=TZ_OFFSET
+  --tweet-sighting      Tweet a Sighting
+  --tz-offset=TZ_OFFSET
                         The number of minutes that the user's timezone is
                         offset from UTC. Valid values are from -720
                         (UTC-12:00) to 840 (UTC+14:00).
-  --upload_url=UPLOAD_URL
+  --upload-url=UPLOAD_URL
                         The url to upload the file to
-  --user_id=USER_ID
-                        A user's id
+  --user-id=USER_ID     A user's id
 """
 
 from __future__ import with_statement
@@ -587,6 +591,66 @@ def api_resightsighting(server_url, opts):
     
     return method_url, data, content_type
 
+def api_updatesighting(server_url, opts):
+    """Construct the url and POST data for a call to the UpdateSighting API method.
+    
+    Arguments:
+    server_url - The url of the server where the API is running.
+    opts - The command-line options.
+    
+    Returns:
+    A tuple containing the full url for invoking the API method, the POST data
+    to be sent and the POST data content type.
+    """
+    # The url requires a user_id so this is mandatory
+    if opts.user_id is None:
+        raise Error('A user_id is required for this API method')
+        
+    # The url requires a sighting_id so this is mandatory
+    if opts.sighting_id is None:
+        raise Error('A sighting_id is required for this API method')
+    
+    method_url = '%s/%s/sightings/%s/%s' % (server_url, _API_ROOT_PATH, opts.user_id, opts.sighting_id)
+
+    params = {}
+    
+    if opts.access_token is not None:
+        params['access_token'] = opts.access_token
+
+    if opts.blobtracker_id is not None:
+        params['blobtracker_id'] = opts.blobtracker_id
+
+    if opts.description is not None:
+        params['description'] = opts.description
+
+    if opts.hold is not None:
+        # We can either set or unset the hold flag
+        if opts.hold:
+            params['hold'] = 'true'
+        else:
+            params['hold'] = 'false'
+
+    if opts.publish_to_facebook is not None:
+        # We can either set or unset the publish to Facebook flag
+        if opts.publish_to_facebook:
+            params['publish_to_facebook'] = 'true'
+        else:
+            params['publish_to_facebook'] = 'false'
+
+    if opts.sandbox:
+        params['sandbox'] = 'true'
+
+    if opts.tweet_sighting is not None:
+        # We can either set or unset the tweet Sighting flag
+        if opts.tweet_sighting:
+            params['tweet_sighting'] = 'true'
+        else:
+            params['tweet_sighting'] = 'false'
+
+    data, content_type = encode_post_data(params)
+    
+    return method_url, data, content_type
+
 def api_upload(server_url, opts):
     """Construct the url and POST data for a call to the Upload API method.
     
@@ -682,6 +746,7 @@ methods = {
     'listuserlocators': api_listuserlocators,
     'listusersightings': api_listusersightings,
     'resightsighting': api_resightsighting,
+    'updatesighting': api_updatesighting,
     'upload': api_upload,
     'uploadurl': api_uploadurl,
     'user': api_user,
@@ -694,10 +759,10 @@ def parse_command_line():
     A tuple containing the API server url, the name of the API method to call
     and the command-line options object returned by the options parser.
     """
-    parser = OptionParser(usage="""%prog server_url method [options]
+    parser = OptionParser(usage="""%prog server-url method [options]
 
 Arguments:
-  server_url            The url of the server where the API is running,
+  server-url            The url of the server where the API is running,
                         e.g. https://resighting.appspot.com
   method                The name of the API to invoke. See list below.
 
@@ -710,34 +775,38 @@ Methods:
   ListUserLocators
   ListUserSightings
   ResightSighting
+  UpdateSighting
   Upload
   UploadUrl
   User""")
     
-    parser.add_option('--access_token', help='An API access token')
+    parser.add_option('--access-token', help='An API access token')
     parser.add_option('--accuracy', help='The accuracy of a latitude and longitude in metres')
     parser.add_option('--altitude', help='An altitude in metres')
-    parser.add_option('--altitude_accuracy', help='The accuracy of an altitude reading in metres')
-    parser.add_option('--blobtracker_id', help='A blobtracker_id returned by the Upload API')
-    parser.add_option('--cursor', help='A cursor returned by a previous call to the method marking the point where listing should continue from.')
+    parser.add_option('--altitude-accuracy', help='The accuracy of an altitude reading in metres')
+    parser.add_option('--blobtracker-id', help='A blobtracker id returned by the Upload API')
+    parser.add_option('--cursor', help='A cursor returned by a previous call to the method marking the point where listing should continue from')
     parser.add_option('--description', help='A description')
-    parser.add_option('--fetch_size', help='The number of results to retrieve')
+    parser.add_option('--fetch-size', help='The number of results to retrieve')
     parser.add_option('--filename', help='A file to upload')
     parser.add_option('--heading', help='A heading')
     parser.add_option('--hold', action='store_true', help='Place a Sighting on hold')
     parser.add_option('--latitude', help='A latitude')
-    parser.add_option('--list_type', help='The type of list to request: latest or nearest Sightings')
-    parser.add_option('--locator_id', action='append', help='A Locator id. Multiple can be specified.')
+    parser.add_option('--list-type', help='The type of list to request: latest or nearest Sightings')
+    parser.add_option('--locator-id', action='append', help='A Locator id. Multiple can be specified.')
     parser.add_option('--longitude', help='A longitude')
+    parser.add_option('--no-hold', action='store_false', help='Do not place a Sighting on hold', dest='hold')
+    parser.add_option('--no-publish-to-facebook', action='store_false', help='Do not publish a Sighting to the user\'s Facebook wall', dest='publish_to_facebook')
+    parser.add_option('--no-tweet-sighting', action='store_false', help='Do not tweet a Sighting', dest='tweet_sighting')
     parser.add_option('--options', action='store_true', help='Send an OPTIONS HTTP request to the server')
-    parser.add_option('--publish_to_facebook', action='store_true', help='Publish a Sighting to the user\'s Facebook wall')
+    parser.add_option('--publish-to-facebook', action='store_true', help='Publish a Sighting to the user\'s Facebook wall')
     parser.add_option('--sandbox', action='store_true', help='Invoke the API in sandbox mode')
-    parser.add_option('--sighting_id', help='A Sighting id')
+    parser.add_option('--sighting-id', help='A Sighting id')
     parser.add_option('--speed', help='A speed')
-    parser.add_option('--tweet_sighting', action='store_true', help='Tweet a Sighting')
-    parser.add_option('--tz_offset', help='The number of minutes that the user\'s timezone is offset from UTC. Valid values are from -720 (UTC-12:00) to 840 (UTC+14:00).')
-    parser.add_option('--upload_url', help='The url to upload the file to')
-    parser.add_option('--user_id', help='A user\'s id')
+    parser.add_option('--tweet-sighting', action='store_true', help='Tweet a Sighting')
+    parser.add_option('--tz-offset', help='The number of minutes that the user\'s timezone is offset from UTC. Valid values are from -720 (UTC-12:00) to 840 (UTC+14:00).')
+    parser.add_option('--upload-url', help='The url to upload the file to')
+    parser.add_option('--user-id', help='A user\'s id')
     
     opts, args = parser.parse_args()
 
