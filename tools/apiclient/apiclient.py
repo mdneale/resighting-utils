@@ -41,12 +41,12 @@ Arguments:
 Methods:
   CreateSighting
   GetSighting
+  GetUserStatistics
   ListLocatorSightings
   ListSightingLocators
   ListSightings
   ListUserLocators
   ListUserSightings
-  ListUserStatistics
   ResightSighting
   UpdateSighting
   Upload
@@ -328,6 +328,32 @@ def api_getsighting(server_url, opts):
 
     return method_url, None, None
 
+def api_getuserstatistics(server_url, opts):
+    """Construct the url for a call to the GetUserStatistics API method.
+    
+    Arguments:
+    server_url - The url of the server where the API is running.
+    opts - The command-line options.
+    
+    Returns:
+    A tuple containing the full url for invoking the API method and None for
+    the POST data and content type as this is a GET request.
+    
+    Raises:
+    Error if no user_id was specified on the command-line.
+    """
+    # The url requires a user_id so this is mandatory
+    if opts.user_id is None:
+        raise Error('A user_id is required for this API method')
+    
+    params = {}
+    if opts.access_token is not None:
+        params['access_token'] = opts.access_token
+    
+    method_url = '%s/%s/users/%s/statistics?%s' % (server_url, _API_ROOT_PATH, opts.user_id, urllib.urlencode(params))
+    
+    return method_url, None, None
+
 def api_listlocatorsightings(server_url, opts):
     """Construct the url for a call to the ListLocatorSightings API method.
     
@@ -515,32 +541,6 @@ def api_listusersightings(server_url, opts):
 
     method_url = '%s/%s/users/%s/sightings?%s' % (server_url, _API_ROOT_PATH, opts.user_id, urllib.urlencode(params))
 
-    return method_url, None, None
-
-def api_listuserstatistics(server_url, opts):
-    """Construct the url for a call to the ListUserStatistics API method.
-    
-    Arguments:
-    server_url - The url of the server where the API is running.
-    opts - The command-line options.
-    
-    Returns:
-    A tuple containing the full url for invoking the API method and None for
-    the POST data and content type as this is a GET request.
-    
-    Raises:
-    Error if no user_id was specified on the command-line.
-    """
-    # The url requires a user_id so this is mandatory
-    if opts.user_id is None:
-        raise Error('A user_id is required for this API method')
-    
-    params = {}
-    if opts.access_token is not None:
-        params['access_token'] = opts.access_token
-    
-    method_url = '%s/%s/users/%s/statistics?%s' % (server_url, _API_ROOT_PATH, opts.user_id, urllib.urlencode(params))
-    
     return method_url, None, None
 
 def api_resightsighting(server_url, opts):
@@ -767,12 +767,12 @@ def api_user(server_url, opts):
 methods = {
     'createsighting': api_createsighting,
     'getsighting': api_getsighting,
+    'getuserstatistics': api_getuserstatistics,
     'listlocatorsightings': api_listlocatorsightings,
     'listsightinglocators': api_listsightinglocators,
     'listsightings': api_listsightings,
     'listuserlocators': api_listuserlocators,
     'listusersightings': api_listusersightings,
-    'listuserstatistics': api_listuserstatistics,
     'resightsighting': api_resightsighting,
     'updatesighting': api_updatesighting,
     'upload': api_upload,
@@ -797,12 +797,12 @@ Arguments:
 Methods:
   CreateSighting
   GetSighting
+  GetUserStatistics
   ListLocatorSightings
   ListSightingLocators
   ListSightings
   ListUserLocators
   ListUserSightings
-  ListUserStatistics
   ResightSighting
   UpdateSighting
   Upload
