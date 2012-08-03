@@ -43,6 +43,7 @@ Methods:
   GetSighting
   GetUserStatistics
   ListLocatorSightings
+  ListResightings
   ListSightingLocators
   ListSightings
   ListUserLocators
@@ -393,6 +394,43 @@ def api_listlocatorsightings(server_url, opts):
         params['longitude'] = opts.longitude
 
     method_url = '%s/%s/locators/%s/sightings?%s' % (server_url, _API_ROOT_PATH, opts.locator_id[0], urllib.urlencode(params))
+
+    return method_url, None, None
+
+def api_listresightings(server_url, opts):
+    """Construct the url for a call to the ListResightings API method.
+    
+    Arguments:
+    server_url - The url of the server where the API is running.
+    opts - The command-line options.
+    
+    Returns:
+    A tuple containing the full url for invoking the API method and None for
+    the POST data and content type as this is a GET request.
+    
+    Raises:
+    Error if no user_id or sighting_id was specified on the command-line.
+    """
+    # The url requires a user_id so this is mandatory
+    if opts.user_id is None:
+        raise Error('A user_id is required for this API method')
+        
+    # The url requires a sighting_id so this is mandatory
+    if opts.sighting_id is None:
+        raise Error('A sighting_id is required for this API method')
+        
+    params = {}
+
+    if opts.access_token is not None:
+        params['access_token'] = opts.access_token
+
+    if opts.cursor is not None:
+        params['cursor'] = opts.cursor
+
+    if opts.fetch_size is not None:
+        params['fetch_size'] = opts.fetch_size
+
+    method_url = '%s/%s/sightings/%s/%s/resightings?%s' % (server_url, _API_ROOT_PATH, opts.user_id, opts.sighting_id, urllib.urlencode(params))
 
     return method_url, None, None
 
@@ -769,6 +807,7 @@ methods = {
     'getsighting': api_getsighting,
     'getuserstatistics': api_getuserstatistics,
     'listlocatorsightings': api_listlocatorsightings,
+    'listresightings': api_listresightings,
     'listsightinglocators': api_listsightinglocators,
     'listsightings': api_listsightings,
     'listuserlocators': api_listuserlocators,
@@ -799,6 +838,7 @@ Methods:
   GetSighting
   GetUserStatistics
   ListLocatorSightings
+  ListResightings
   ListSightingLocators
   ListSightings
   ListUserLocators
