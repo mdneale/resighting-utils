@@ -46,6 +46,7 @@ Methods:
   ListResightings
   ListSightingLocators
   ListSightings
+  ListUserCountryStatistics
   ListUserLocators
   ListUserSightings
   ResightSighting
@@ -506,6 +507,39 @@ def api_listsightings(server_url, opts):
 
     return method_url, None, None
 
+def api_listusercountrystatistics(server_url, opts):
+    """Construct the url for a call to the ListUserCountryStatistics API method.
+    
+    Arguments:
+    server_url - The url of the server where the API is running.
+    opts - The command-line options.
+    
+    Returns:
+    A tuple containing the full url for invoking the API method and None for
+    the POST data and content type as this is a GET request.
+    
+    Raises:
+    Error if no user_id was specified on the command-line.
+    """
+    # The url requires a user_id so this is mandatory
+    if opts.user_id is None:
+        raise Error('A user_id is required for this API method')
+    
+    params = {}
+    
+    if opts.access_token is not None:
+        params['access_token'] = opts.access_token
+
+    if opts.cursor is not None:
+        params['cursor'] = opts.cursor
+
+    if opts.fetch_size is not None:
+        params['fetch_size'] = opts.fetch_size
+
+    method_url = '%s/%s/users/%s/statistics/countries?%s' % (server_url, _API_ROOT_PATH, opts.user_id, urllib.urlencode(params))
+
+    return method_url, None, None
+
 def api_listuserlocators(server_url, opts):
     """Construct the url for a call to the ListUserLocators API method.
     
@@ -810,6 +844,7 @@ methods = {
     'listresightings': api_listresightings,
     'listsightinglocators': api_listsightinglocators,
     'listsightings': api_listsightings,
+    'listusercountrystatistics': api_listusercountrystatistics,
     'listuserlocators': api_listuserlocators,
     'listusersightings': api_listusersightings,
     'resightsighting': api_resightsighting,
@@ -841,6 +876,7 @@ Methods:
   ListResightings
   ListSightingLocators
   ListSightings
+  ListUserCountryStatistics
   ListUserLocators
   ListUserSightings
   ResightSighting
