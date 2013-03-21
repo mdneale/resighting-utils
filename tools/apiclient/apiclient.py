@@ -49,6 +49,7 @@ Methods:
   ListUserCountryStatistics
   ListUserLocators
   ListUserSightings
+  Meta
   ResightSighting
   UpdateSighting
   Upload
@@ -615,6 +616,26 @@ def api_listusersightings(server_url, opts):
 
     return method_url, None, None
 
+def api_meta(server_url, opts):
+    """Construct the url for a call to the Meta API method.
+    
+    Arguments:
+    server_url - The url of the server where the API is running.
+    opts - The command-line options.
+    
+    Returns:
+    A tuple containing the full url for invoking the API method and None for
+    the POST data and content type as this is a GET request.
+    """
+    params = {}
+    
+    if opts.access_token is not None:
+        params['access_token'] = opts.access_token
+
+    method_url = '%s/%s/meta?%s' % (server_url, _API_ROOT_PATH, urllib.urlencode(params))
+
+    return method_url, None, None
+
 def api_resightsighting(server_url, opts):
     """Construct the url and POST data for a call to the ResightSighting API method.
     
@@ -847,6 +868,7 @@ methods = {
     'listusercountrystatistics': api_listusercountrystatistics,
     'listuserlocators': api_listuserlocators,
     'listusersightings': api_listusersightings,
+    'meta': api_meta,
     'resightsighting': api_resightsighting,
     'updatesighting': api_updatesighting,
     'upload': api_upload,
@@ -879,6 +901,7 @@ Methods:
   ListUserCountryStatistics
   ListUserLocators
   ListUserSightings
+  Meta
   ResightSighting
   UpdateSighting
   Upload
