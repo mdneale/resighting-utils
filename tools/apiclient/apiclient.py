@@ -40,6 +40,7 @@ Arguments:
 
 Methods:
   CreateSighting
+  GetDailySighting
   GetSighting
   GetUserStatistics
   ListLocatorSightings
@@ -68,6 +69,7 @@ Options:
                         A blobtracker id returned by the Upload API
   --cursor=CURSOR       A cursor returned by a previous call to the method
                         marking the point where listing should continue from
+  --date=DATE           A date in the format YYYY-MM-DD
   --description=DESCRIPTION
                         A description
   --fetch-size=FETCH_SIZE
@@ -106,6 +108,7 @@ Options:
 
 from __future__ import with_statement
 
+import datetime
 import httplib
 import simplejson
 import socket
@@ -299,6 +302,41 @@ def api_createsighting(server_url, opts):
     data, content_type = encode_post_data(params)
     
     return method_url, data, content_type
+
+def api_getdailysighting(server_url, opts):
+    """Construct the url for a call to the GetDailySighting API method.
+    
+    Arguments:
+    server_url - The url of the server where the API is running.
+    opts - The command-line options.
+    
+    Returns:
+    A tuple containing the full url for invoking the API method and None for
+    the POST data and content type as this is a GET request.
+    
+    Raises:
+    Error if no date was specified on the command-line or if the date is not
+    a valid date.
+    """
+    # The url requires a date so this is mandatory
+    if opts.date is None:
+        raise Error('A date is required for this API method')
+    
+    # Check the date is a valid date
+    d = None
+    try:
+        d = datetime.datetime.strptime(opts.date, '%Y-%m-%d')
+    except ValueError:
+        raise Error('The date is invalid')
+    
+    params = {}
+
+    if opts.access_token is not None:
+        params['access_token'] = opts.access_token
+
+    method_url = '%s/%s/dailysightings/%04d/%02d/%02d?%s' % (server_url, _API_ROOT_PATH, d.year, d.month, d.day, urllib.urlencode(params))
+
+    return method_url, None, None
 
 def api_getsighting(server_url, opts):
     """Construct the url for a call to the GetSighting API method.
@@ -859,6 +897,7 @@ def api_user(server_url, opts):
 # construct the url and optional POST data.
 methods = {
     'createsighting': api_createsighting,
+    'getdailysighting': api_getdailysighting,
     'getsighting': api_getsighting,
     'getuserstatistics': api_getuserstatistics,
     'listlocatorsightings': api_listlocatorsightings,
@@ -892,6 +931,7 @@ Arguments:
 
 Methods:
   CreateSighting
+  GetDailySighting
   GetSighting
   GetUserStatistics
   ListLocatorSightings
@@ -914,6 +954,7 @@ Methods:
     parser.add_option('--altitude-accuracy', help='The accuracy of an altitude reading in metres')
     parser.add_option('--blobtracker-id', help='A blobtracker id returned by the Upload API')
     parser.add_option('--cursor', help='A cursor returned by a previous call to the method marking the point where listing should continue from')
+    parser.add_option('--date', help='A date in the format YYYY-MM-DD')
     parser.add_option('--description', help='A description')
     parser.add_option('--fetch-size', help='The number of results to retrieve')
     parser.add_option('--filename', help='A file to upload')
