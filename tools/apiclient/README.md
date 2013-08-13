@@ -20,7 +20,7 @@ a subdirectory but if you are using Python 2.6 or above you probably won't need 
 Example
 -------
 
-    $ ./apiclient.py https://resighting.appspot.com User --access_token=ACCESS_TOKEN
+    $ ./apiclient.py https://resighting-api.appspot.com User --access_token=ACCESS_TOKEN
     Headers: ['Content-Type: application/json\r\n', 'Vary: Accept-Encoding\r\n', 'Date: Thu, 26 Apr 2012 15:47:51 GMT\r\n', 'Server: Google Frontend\r\n', 'Cache-Control: private\r\n', 'Connection: close\r\n']
     {
         "update_date": "2012-03-07T11:23:56.888240Z",

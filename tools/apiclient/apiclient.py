@@ -35,7 +35,7 @@ Usage: apiclient.py server-url method [options]
 
 Arguments:
   server-url            The url of the server where the API is running,
-                        e.g. https://resighting.appspot.com
+                        e.g. https://resighting-api.appspot.com
   method                The name of the API to invoke. See list below.
 
 Methods:
@@ -926,7 +926,7 @@ def parse_command_line():
 
 Arguments:
   server-url            The url of the server where the API is running,
-                        e.g. https://resighting.appspot.com
+                        e.g. https://resighting-api.appspot.com
   method                The name of the API to invoke. See list below.
 
 Methods:
