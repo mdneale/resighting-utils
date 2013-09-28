@@ -355,11 +355,11 @@ def api_getsighting(server_url, opts):
     """
     # The url requires a user_id so this is mandatory
     if opts.user_id is None:
-        raise Error('A user_id is required for this API method')
+        raise Error('A user-id is required for this API method')
         
     # The url requires a sighting_id so this is mandatory
     if opts.sighting_id is None:
-        raise Error('A sighting_id is required for this API method')
+        raise Error('A sighting-id is required for this API method')
         
     params = {}
 
@@ -386,7 +386,7 @@ def api_getuser(server_url, opts):
     """
     # The url requires a user_id so this is mandatory
     if opts.user_id is None:
-        raise Error('A user_id is required for this API method')
+        raise Error('A user-id is required for this API method')
     
     params = {}
     if opts.access_token is not None:
@@ -412,7 +412,7 @@ def api_getuserstatistics(server_url, opts):
     """
     # The url requires a user_id so this is mandatory
     if opts.user_id is None:
-        raise Error('A user_id is required for this API method')
+        raise Error('A user-id is required for this API method')
     
     params = {}
     if opts.access_token is not None:
@@ -438,7 +438,7 @@ def api_listlocatorsightings(server_url, opts):
     """
     # The url requires a locator_id so this is mandatory
     if opts.locator_id is None:
-        raise Error('A locator_id is required for this API method')
+        raise Error('A locator-id is required for this API method')
     
     params = {}
 
@@ -480,11 +480,11 @@ def api_listresightings(server_url, opts):
     """
     # The url requires a user_id so this is mandatory
     if opts.user_id is None:
-        raise Error('A user_id is required for this API method')
+        raise Error('A user-id is required for this API method')
         
     # The url requires a sighting_id so this is mandatory
     if opts.sighting_id is None:
-        raise Error('A sighting_id is required for this API method')
+        raise Error('A sighting-id is required for this API method')
         
     params = {}
 
@@ -517,11 +517,11 @@ def api_listsightinglocators(server_url, opts):
     """
     # The url requires a user_id so this is mandatory
     if opts.user_id is None:
-        raise Error('A user_id is required for this API method')
+        raise Error('A user-id is required for this API method')
         
     # The url requires a sighting_id so this is mandatory
     if opts.sighting_id is None:
-        raise Error('A sighting_id is required for this API method')
+        raise Error('A sighting-id is required for this API method')
         
     params = {}
 
@@ -589,7 +589,7 @@ def api_listusercountrystatistics(server_url, opts):
     """
     # The url requires a user_id so this is mandatory
     if opts.user_id is None:
-        raise Error('A user_id is required for this API method')
+        raise Error('A user-id is required for this API method')
     
     params = {}
     
@@ -622,7 +622,7 @@ def api_listuserlocators(server_url, opts):
     """
     # The url requires a user_id so this is mandatory
     if opts.user_id is None:
-        raise Error('A user_id is required for this API method')
+        raise Error('A user-id is required for this API method')
     
     params = {}
     
@@ -655,7 +655,7 @@ def api_listusersightings(server_url, opts):
     """
     # The url requires a user_id so this is mandatory
     if opts.user_id is None:
-        raise Error('A user_id is required for this API method')
+        raise Error('A user-id is required for this API method')
     
     params = {}
 
@@ -714,11 +714,11 @@ def api_resightsighting(server_url, opts):
     """
     # The url requires a user_id so this is mandatory
     if opts.user_id is None:
-        raise Error('A user_id is required for this API method')
+        raise Error('A user-id is required for this API method')
         
     # The url requires a sighting_id so this is mandatory
     if opts.sighting_id is None:
-        raise Error('A sighting_id is required for this API method')
+        raise Error('A sighting-id is required for this API method')
     
     method_url = '%s/%s/sightings/%s/%s/resightings' % (server_url, _API_ROOT_PATH, opts.user_id, opts.sighting_id)
 
@@ -789,11 +789,11 @@ def api_updatesighting(server_url, opts):
     """
     # The url requires a user_id so this is mandatory
     if opts.user_id is None:
-        raise Error('A user_id is required for this API method')
+        raise Error('A user-id is required for this API method')
         
     # The url requires a sighting_id so this is mandatory
     if opts.sighting_id is None:
-        raise Error('A sighting_id is required for this API method')
+        raise Error('A sighting-id is required for this API method')
     
     method_url = '%s/%s/sightings/%s/%s' % (server_url, _API_ROOT_PATH, opts.user_id, opts.sighting_id)
 
@@ -852,7 +852,7 @@ def api_upload(server_url, opts):
     """
     # The upload_url is mandatory
     if opts.upload_url is None:
-        raise Error('An upload_url is required for this API method')
+        raise Error('An upload-url is required for this API method')
 
     params = {}
 
