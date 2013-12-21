@@ -44,6 +44,7 @@ Methods:
   GetSighting
   GetUser
   GetUserStatistics
+  ListLocators
   ListLocatorSightings
   ListResightings
   ListSightingLocators
@@ -420,6 +421,32 @@ def api_getuserstatistics(server_url, opts):
     
     method_url = '%s/%s/users/%s/statistics?%s' % (server_url, _API_ROOT_PATH, opts.user_id, urllib.urlencode(params))
     
+    return method_url, None, None
+
+def api_listlocators(server_url, opts):
+    """Construct the url for a call to the ListLocators API method.
+    
+    Arguments:
+    server_url - The url of the server where the API is running.
+    opts - The command-line options.
+    
+    Returns:
+    A tuple containing the full url for invoking the API method and None for
+    the POST data and content type as this is a GET request.
+    """
+    params = {}
+
+    if opts.access_token is not None:
+        params['access_token'] = opts.access_token
+
+    if opts.cursor is not None:
+        params['cursor'] = opts.cursor
+
+    if opts.fetch_size is not None:
+        params['fetch_size'] = opts.fetch_size
+
+    method_url = '%s/%s/locators?%s' % (server_url, _API_ROOT_PATH, urllib.urlencode(params))
+
     return method_url, None, None
 
 def api_listlocatorsightings(server_url, opts):
@@ -928,6 +955,7 @@ methods = {
     'getsighting': api_getsighting,
     'getuser': api_getuser,
     'getuserstatistics': api_getuserstatistics,
+    'listlocators': api_listlocators,
     'listlocatorsightings': api_listlocatorsightings,
     'listresightings': api_listresightings,
     'listsightinglocators': api_listsightinglocators,
@@ -963,6 +991,7 @@ Methods:
   GetSighting
   GetUser
   GetUserStatistics
+  ListLocators
   ListLocatorSightings
   ListResightings
   ListSightingLocators
