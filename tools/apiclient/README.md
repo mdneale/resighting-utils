@@ -9,13 +9,7 @@ Licenced under the The MIT License
 
 Copyright (c) 2012 Matthew Neale
 
-Requires simplejson
--------------------
-
-This script was written with and has been used extensively with Python 2.5 and
-is still used that way due to the fact that Resighting is still using Python 2.5
-on Google App Engine. Simplejson is required for Python 2.5 and so is included in
-a subdirectory but if you are using Python 2.6 or above you probably won't need it.
+Requires Python 2.7
 
 Example
 -------

@@ -31,6 +31,8 @@ http://resighting.wikia.com/wiki/API.
 For more documentation of this script and examples see
 http://resighting.wikia.com/wiki/Apiclient.py.
 
+Requires Python 2.7.
+
 Usage: apiclient.py server-url method [options]
 
 Arguments:
@@ -108,11 +110,9 @@ Options:
   --user-id=USER_ID     A user's id
 """
 
-from __future__ import with_statement
-
 import datetime
 import httplib
-import simplejson
+import json
 import socket
 import sys
 import urllib
@@ -161,9 +161,7 @@ def encode_post_data(params, files=None):
         content_type = 'application/x-www-form-urlencoded charset=utf-8'
 
         if params is not None:
-            for name in params.keys():
-                value = params[name]
-                
+            for name, value in params.viewitems():
                 # The value can be a list or tuple of multiple values.
                 # In this case we added multiple parameters to the request, each with the
                 # same name.
@@ -188,9 +186,7 @@ def encode_post_data(params, files=None):
 
         # Add HTTP parameters
         if params is not None:
-            for name in params.keys():
-                value = params[name]
-                
+            for name, value in params.viewitems():
                 # The value can be a list or tuple of multiple values.
                 # In this case we added multiple parameters to the request, each with the
                 # same name.
@@ -208,9 +204,7 @@ def encode_post_data(params, files=None):
 
         # Add any files to be uploaded
         if files is not None:
-            for name in files.keys():
-                file_data = files[name]
-                
+            for name, file_data in files.viewitems():
                 # The file data can be a list or tuple of data from multiple files.
                 # In this case we added multiple files to the request, each with the
                 # same name.
@@ -895,7 +889,7 @@ def api_upload(server_url, opts):
         try:
             with open(opts.filename, 'rb') as f:
                 files['file'] = f.read()
-        except IOError, e:
+        except IOError as e:
             raise Error(str(e))
 
     data, content_type = encode_post_data(params, files=files)
@@ -1045,7 +1039,7 @@ Methods:
     method = args[1]
     
     # Check the API method exists
-    if method.lower() not in methods.keys():
+    if method.lower() not in methods:
         parser.error('Invalid method')
 
     return (server_url, method, opts)
@@ -1105,20 +1099,20 @@ def invoke_api(server_url, method, opts):
             response = f.readline()
             headers = f.info().headers 
             f.close()
-    except urllib2.HTTPError, e:
+    except urllib2.HTTPError as e:
         status_code = e.code
         response = e.readline()
         headers = e.info().headers 
         e.close()
-    except urllib2.URLError, e:
+    except urllib2.URLError:
         if f is not None:
             f.close()
         raise Error('Failed to connect to API at %s' % method_url)
-    except httplib.HTTPException, e:
+    except httplib.HTTPException:
         if connection is not None:
             connection.close()
         raise Error('Failed to connect to API at %s' % method_url)
-    except socket.error, e:
+    except socket.error:
         if connection is not None:
             connection.close()
         raise Error('Failed to connect to API at %s' % method_url)
@@ -1139,7 +1133,7 @@ def main():
 
     try:
         response, status_code, headers = invoke_api(server_url, method, opts)
-    except Error, e:
+    except Error as e:
         print >> sys.stdout, 'error: %s' % e.message
         return -1
 
@@ -1151,8 +1145,8 @@ def main():
     # Output the response
     try:
         # Pretty-print the JSON response
-        json_response = simplejson.loads(response)
-        print simplejson.dumps(json_response, indent=4)
+        json_response = json.loads(response)
+        print json.dumps(json_response, indent=4)
     except ValueError:
         # Not a JSON response
         # Could be blob upload error message directly from App Engine
