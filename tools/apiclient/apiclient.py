@@ -41,6 +41,7 @@ Arguments:
   method                The name of the API to invoke. See list below.
 
 Methods:
+  CreateLocatorSighting
   CreateSighting
   GetDailySighting
   GetSighting
@@ -231,6 +232,41 @@ def encode_post_data(params, files=None):
 # containing the url for the particular API method, the POST data to send
 # with the request and the POST data content type. For GET requests the latter
 # two are None.
+
+def api_createlocatorsighting(server_url, opts):
+    """Construct the url and POST data for a call to the CreateLocatorSighting API method.
+    
+    Arguments:
+    server_url - The url of the server where the API is running.
+    opts - The command-line options.
+    
+    Returns:
+    A tuple containing the full url for invoking the API method, the POST data
+    to be sent and the POST data content type.
+    """
+    # The url requires a locator_id so this is mandatory
+    if opts.locator_id is None:
+        raise Error('A locator-id is required for this API method')
+    
+    method_url = '%s/%s/locators/%s/sightings' % (server_url, _API_ROOT_PATH, opts.locator_id[0])
+    
+    params = {}
+
+    if opts.access_token is not None:
+        params['access_token'] = opts.access_token
+
+    if opts.sandbox:
+        params['sandbox'] = 'true'
+
+    if opts.user_id is not None:
+        params['user_id'] = opts.user_id
+        
+    if opts.sighting_id is not None:
+        params['sighting_id'] = opts.sighting_id
+
+    data, content_type = encode_post_data(params)
+    
+    return method_url, data, content_type
 
 def api_createsighting(server_url, opts):
     """Construct the url and POST data for a call to the CreateSighting API method.
@@ -944,6 +980,7 @@ def api_user(server_url, opts):
 # A dictionary containing all the API methods and the function to call to
 # construct the url and optional POST data.
 methods = {
+    'createlocatorsighting': api_createlocatorsighting,
     'createsighting': api_createsighting,
     'getdailysighting': api_getdailysighting,
     'getsighting': api_getsighting,
@@ -980,6 +1017,7 @@ Arguments:
   method                The name of the API to invoke. See list below.
 
 Methods:
+  CreateLocatorSighting
   CreateSighting
   GetDailySighting
   GetSighting
