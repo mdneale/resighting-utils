@@ -56,6 +56,7 @@ Methods:
   ListUserLocators
   ListUserSightings
   Meta
+  RemoveLocatorSighting
   ResightSighting
   UpdateSighting
   Upload
@@ -758,6 +759,43 @@ def api_meta(server_url, opts):
 
     return method_url, None, None
 
+def api_removelocatorsighting(server_url, opts):
+    """Construct the url and POST data for a call to the RemoveLocatorSighting API method.
+    
+    Arguments:
+    server_url - The url of the server where the API is running.
+    opts - The command-line options.
+    
+    Returns:
+    A tuple containing the full url for invoking the API method, the POST data
+    to be sent and the POST data content type.
+    """
+    # The url requires a locator_id so this is mandatory
+    if opts.locator_id is None:
+        raise Error('A locator-id is required for this API method')
+        
+    # The url requires a user_id so this is mandatory
+    if opts.user_id is None:
+        raise Error('A user-id is required for this API method')
+        
+    # The url requires a sighting_id so this is mandatory
+    if opts.sighting_id is None:
+        raise Error('A sighting-id is required for this API method')
+
+    method_url = '{0}/{1}/locators/{2}/sightings/{3}/{4}/remove'.format(server_url, _API_ROOT_PATH, opts.locator_id[0], opts.user_id, opts.sighting_id)
+    
+    params = {}
+
+    if opts.access_token is not None:
+        params['access_token'] = opts.access_token
+
+    if opts.sandbox:
+        params['sandbox'] = 'true'
+
+    data, content_type = encode_post_data(params)
+    
+    return method_url, data, content_type
+
 def api_resightsighting(server_url, opts):
     """Construct the url and POST data for a call to the ResightSighting API method.
     
@@ -995,6 +1033,7 @@ methods = {
     'listuserlocators': api_listuserlocators,
     'listusersightings': api_listusersightings,
     'meta': api_meta,
+    'removelocatorsighting': api_removelocatorsighting,
     'resightsighting': api_resightsighting,
     'updatesighting': api_updatesighting,
     'upload': api_upload,
@@ -1032,6 +1071,7 @@ Methods:
   ListUserLocators
   ListUserSightings
   Meta
+  RemoveLocatorSighting
   ResightSighting
   UpdateSighting
   Upload
