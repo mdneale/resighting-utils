@@ -41,6 +41,7 @@ Arguments:
   method                The name of the API to invoke. See list below.
 
 Methods:
+  CreateLocator
   CreateLocatorSighting
   CreateSighting
   GetDailySighting
@@ -73,6 +74,7 @@ Options:
                         The accuracy of an altitude reading in metres
   --blobtracker-id=BLOBTRACKER_ID
                         A blobtracker id returned by the Upload API
+  --closed              A closed locator requiring approval to join
   --cursor=CURSOR       A cursor returned by a previous call to the method
                         marking the point where listing should continue from
   --date=DATE           A date in the format YYYY-MM-DD
@@ -91,6 +93,7 @@ Options:
                         A Locator id. Multiple can be specified.
   --longitude=LONGITUDE
                         A longitude
+  --name=NAME           A name
   --no-hold             Do not place a Sighting on hold
   --no-publish-to-facebook
                         Do not publish a Sighting to the user's Facebook wall
@@ -233,6 +236,40 @@ def encode_post_data(params, files=None):
 # containing the url for the particular API method, the POST data to send
 # with the request and the POST data content type. For GET requests the latter
 # two are None.
+
+def api_createlocator(server_url, opts):
+    """Construct the url and POST data for a call to the CreateLocator API method.
+    
+    Arguments:
+    server_url - The url of the server where the API is running.
+    opts - The command-line options.
+    
+    Returns:
+    A tuple containing the full url for invoking the API method, the POST data
+    to be sent and the POST data content type.
+    """
+    method_url = u'{0}/{1}/locators'.format(server_url, _API_ROOT_PATH)
+
+    params = {}
+    
+    if opts.access_token is not None:
+        params[u'access_token'] = opts.access_token
+
+    if opts.closed:
+        params[u'closed'] = 'true'
+
+    if opts.description is not None:
+        params[u'description'] = opts.description
+
+    if opts.name is not None:
+        params[u'name'] = opts.name
+
+    if opts.sandbox:
+        params[u'sandbox'] = 'true'
+
+    data, content_type = encode_post_data(params)
+    
+    return method_url, data, content_type
 
 def api_createlocatorsighting(server_url, opts):
     """Construct the url and POST data for a call to the CreateLocatorSighting API method.
@@ -1018,6 +1055,7 @@ def api_user(server_url, opts):
 # A dictionary containing all the API methods and the function to call to
 # construct the url and optional POST data.
 methods = {
+    'createlocator': api_createlocator,
     'createlocatorsighting': api_createlocatorsighting,
     'createsighting': api_createsighting,
     'getdailysighting': api_getdailysighting,
@@ -1056,6 +1094,7 @@ Arguments:
   method                The name of the API to invoke. See list below.
 
 Methods:
+  CreateLocator
   CreateLocatorSighting
   CreateSighting
   GetDailySighting
@@ -1083,6 +1122,7 @@ Methods:
     parser.add_option('--altitude', help='An altitude in metres')
     parser.add_option('--altitude-accuracy', help='The accuracy of an altitude reading in metres')
     parser.add_option('--blobtracker-id', help='A blobtracker id returned by the Upload API')
+    parser.add_option('--closed', action='store_true', help='A closed locator requiring approval to join')
     parser.add_option('--cursor', help='A cursor returned by a previous call to the method marking the point where listing should continue from')
     parser.add_option('--date', help='A date in the format YYYY-MM-DD')
     parser.add_option('--description', help='A description')
@@ -1094,6 +1134,7 @@ Methods:
     parser.add_option('--list-type', help='The type of list to request: latest or nearest Sightings')
     parser.add_option('--locator-id', action='append', help='A Locator id. Multiple can be specified.')
     parser.add_option('--longitude', help='A longitude')
+    parser.add_option('--name', help='A name')
     parser.add_option('--no-hold', action='store_false', help='Do not place a Sighting on hold', dest='hold')
     parser.add_option('--no-publish-to-facebook', action='store_false', help='Do not publish a Sighting to the user\'s Facebook wall', dest='publish_to_facebook')
     parser.add_option('--no-tweet-sighting', action='store_false', help='Do not tweet a Sighting', dest='tweet_sighting')
