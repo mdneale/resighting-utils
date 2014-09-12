@@ -80,7 +80,7 @@ Options:
   --date=DATE           A date in the format YYYY-MM-DD
   --description=DESCRIPTION
                         A description
-  --end-date=END_DATE   A date or datetime in ISO 8601
+  --end-date=END_DATE   A date or datetime in ISO 8601 format
   --fetch-size=FETCH_SIZE
                         The number of results to retrieve
   --filename=FILENAME   A file to upload
@@ -107,7 +107,7 @@ Options:
                         A Sighting id
   --speed=SPEED         A speed
   --start-date=START_DATE
-                        A date or datetime in ISO 8601  
+                        A date or datetime in ISO 8601 format
   --tweet-sighting      Tweet a Sighting
   --tz-offset=TZ_OFFSET
                         The number of minutes that the user's timezone is
@@ -1135,7 +1135,7 @@ Methods:
     parser.add_option('--cursor', help='A cursor returned by a previous call to the method marking the point where listing should continue from')
     parser.add_option('--date', help='A date in the format YYYY-MM-DD')
     parser.add_option('--description', help='A description')
-    parser.add_option('--end-date', help='A date or datetime in ISO 8601')
+    parser.add_option('--end-date', help='A date or datetime in ISO 8601 format')
     parser.add_option('--fetch-size', help='The number of results to retrieve')
     parser.add_option('--filename', help='A file to upload')
     parser.add_option('--heading', help='A heading')
@@ -1153,7 +1153,7 @@ Methods:
     parser.add_option('--sandbox', action='store_true', help='Invoke the API in sandbox mode')
     parser.add_option('--sighting-id', help='A Sighting id')
     parser.add_option('--speed', help='A speed')
-    parser.add_option('--start-date', help='A date or datetime in ISO 8601')
+    parser.add_option('--start-date', help='A date or datetime in ISO 8601 format')
     parser.add_option('--tweet-sighting', action='store_true', help='Tweet a Sighting')
     parser.add_option('--tz-offset', help='The number of minutes that the user\'s timezone is offset from UTC. Valid values are from -720 (UTC-12:00) to 840 (UTC+14:00).')
     parser.add_option('--upload-url', help='The url to upload the file to')
