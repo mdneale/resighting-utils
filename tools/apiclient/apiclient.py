@@ -546,6 +546,9 @@ def api_listlocatorsightings(server_url, opts):
     if opts.cursor is not None:
         params['cursor'] = opts.cursor
 
+    if opts.end_date is not None:
+        params['end_date'] = opts.end_date
+
     if opts.fetch_size is not None:
         params['fetch_size'] = opts.fetch_size
 
@@ -557,6 +560,9 @@ def api_listlocatorsightings(server_url, opts):
 
     if opts.longitude is not None:
         params['longitude'] = opts.longitude
+
+    if opts.start_date is not None:
+        params['start_date'] = opts.start_date
 
     method_url = '%s/%s/locators/%s/sightings?%s' % (server_url, _API_ROOT_PATH, opts.locator_id[0], urllib.urlencode(params))
 
